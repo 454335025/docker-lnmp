@@ -1,0 +1,3 @@
+*.conf
+!test.conf
+!.gitignore

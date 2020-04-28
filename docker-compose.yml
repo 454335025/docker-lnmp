@@ -1,0 +1,155 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/conf.d/:/etc/nginx/conf.d/:ro
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./log/:/var/log/dnmp/:rw
+    networks:
+      lnmp:
+        aliases:
+          - user.com
+
+  php54:
+    build: ./php/php54/
+    container_name: php54
+    expose:
+      - "9000"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/php/php54.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php/php-fpm54.conf:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./log/php54/:/var/log/dnmp/:rw
+    networks:
+      - lnmp
+ 
+  php56:
+    build: ./php/php56/
+    container_name: php56
+    expose:
+      - "9000"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/php/php56.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php/php-fpm56.conf:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./log/php56/:/var/log/dnmp/:rw
+    networks:
+      - lnmp
+ 
+  php70:
+    build: ./php/php70/
+    container_name: php70
+    expose:
+      - "9000"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/php/php70.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php/php-fpm70.conf:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./log/php70/:/var/log/dnmp/:rw
+    networks:
+      - lnmp
+
+
+  php71:
+    build: ./php/php71/
+    container_name: php71
+    expose:
+      - "9000"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/php/php71.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php/php-fpm71.conf:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./log/php71/:/var/log/dnmp/:rw
+    networks:
+      - lnmp
+
+  php72:
+    build: ./php/php72/
+    container_name: php72
+    expose:
+      - "9000"
+    volumes:
+      - ./www:/var/www/html/:rw
+      - ./conf/php/php72.ini:/usr/local/etc/php/php.ini:ro
+      - ./conf/php/php-fpm72.conf:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ./log/php72/:/var/log/dnmp/:rw
+    networks:
+      - lnmp
+
+  mysql56:
+    image: mysql:5.6
+    container_name: mysql56
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./conf/mysql/mysql56.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./mysql/mysql5.6/:/var/lib/mysql/:rw
+    networks:
+      - lnmp
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+
+
+  mysql57:
+    image: mysql:5.7
+    container_name: mysql57
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./conf/mysql/mysql57.cnf:/etc/mysql/conf.d/mysql.cnf:rw
+      - ./mysql/mysql5.7/:/var/lib/mysql/:rw
+    networks:
+      - lnmp
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+
+  mysql8:
+    image: mysql:8.0
+    container_name: mysql8
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./conf/mysql/mysql8.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./mysql/mysql8.0/:/var/lib/mysql/:rw
+    networks:
+      - lnmp
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+
+  redis:
+    image: redis:4.0
+    container_name: redis
+    networks:
+      - lnmp
+    ports:
+      - "6379:6379"
+    
+  # memcached:
+  #   image: memcached
+  #   container_name: memcached
+  #   networks:
+  #     - lnmp
+  #   ports:
+  #     - "11211:11211"
+
+
+  node:
+    image: "node:11"
+    container_name: "node"
+    working_dir: /home/node
+    tty: true
+    volumes:
+      - ./www:/home/node:rw
+    networks:
+      - lnmp
+  
+networks:
+  lnmp:
+    external:
+      name: docker
