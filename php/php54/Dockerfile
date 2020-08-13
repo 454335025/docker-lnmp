@@ -3,7 +3,7 @@ FROM php:5.4-fpm
 COPY ./sources.list.jessie /etc/apt/sources.list
 
 RUN apt-get update \
-    && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev git\
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install gd \
     && :\
@@ -34,26 +34,8 @@ RUN apt-get update \
     && docker-php-ext-install shmop \
     && docker-php-ext-install sysvmsg \
     && docker-php-ext-install sysvsem \
-    && docker-php-ext-install sysvshm
-
-
-#GIT
-RUN apt-get install git -y
-
-# Composer
-RUN php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.php');" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /bin/composer \
-    && composer config -g repo.packagist composer https://packagist.phpcomposer.com
-
-COPY ./redis-4.1.0.tgz /tmp/redis.tgz
-RUN ls /tmp
-RUN mkdir -p /tmp/redis \
-    && tar -xf /tmp/redis.tgz -C /tmp/redis --strip-components=1 \
-    && rm /tmp/redis.tgz \
-    #&& docker-php-ext-configure /tmp/redis --enable-redis \
-    && mv /tmp/redis /usr/src/php/ext/redis \
-    && docker-php-ext-install redis \
-    && rm -r /usr/src/php/ext/redis
-
+    && docker-php-ext-install sysvshm \
+    && pecl install redis-2.2.7 \
+    && docker-php-ext-enable redis \
+    && pecl install xdebug-2.4.0 \
+    && docker-php-ext-enable xdebug 

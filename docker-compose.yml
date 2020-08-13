@@ -102,7 +102,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./conf/mysql/mysql57.cnf:/etc/mysql/conf.d/mysql.cnf:rw
+      - ./conf/mysql/mysql57.cnf:/etc/mysql/conf.d/mysql.cnf:ro
       - ./mysql/mysql5.7/:/var/lib/mysql/:rw
     networks:
       - lnmp
